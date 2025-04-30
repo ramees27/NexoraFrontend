@@ -1,5 +1,9 @@
 import React from 'react'
 import { FaUserGraduate, FaCertificate, FaThumbsUp, FaUserTie, FaCalendarAlt, FaChartLine } from "react-icons/fa";
+import TopRatedSection from './TopRatedSection';
+import ApplySection from './ApplySection';
+import UserSaySection from './UserSaySection';
+import QuestionSection from './QuestionSection';
 
 const HomePage = () => {
     return (
@@ -52,7 +56,7 @@ const HomePage = () => {
                             How Nexora Works
                         </h2>
                         <p className="text-gray-600 mb-10">
-                            We make it easy to connect with professional career counselors who can guide you through your career decisions.
+                            We make it easy to connect with professional career counselors <br/> who can guide you through your career decisions.
                         </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -96,9 +100,15 @@ const HomePage = () => {
                             </div>
                         </div>
                     </div>
+                    
                 </section>
+                <hr className="mx-auto  my-8 border-t-2 w-[1250px] " />
 
 
+<TopRatedSection/>
+<ApplySection/>
+<UserSaySection/>
+<QuestionSection/>
             </>
 
             )
