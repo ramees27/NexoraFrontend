@@ -1,7 +1,9 @@
 import React from 'react'
 import { FaStar } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const TopRatedSection = () => {
+  const navigate=useNavigate();
   return (
     <section className="py-12 bg-white">
     <div className="max-w-7xl mx-auto px-4">
@@ -61,7 +63,7 @@ const TopRatedSection = () => {
 
       {/* View All Button */}
       <div className="text-center mt-10">
-        <button className="bg-[#040B57] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#060e70] transition">
+        <button className="bg-[#040B57] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#060e70] transition" onClick={()=>navigate("/search")}>
           View all Counselors
         </button>
       </div>

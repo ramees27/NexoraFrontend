@@ -1,7 +1,9 @@
 import React from 'react'
 import { FaArrowLeft, FaSearch, FaStar, FaUserTie } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 
 const Search = () => {
+    const navigate=useNavigate()
   return (
     <div className="min-h-screen bg-[#f5faff] px-4 py-6 mt-16">
     {/* Back Button */}
@@ -34,7 +36,7 @@ const Search = () => {
     </div>
   
     {/* Counselor Cards Grid */}
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-7xl mx-auto">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 max-w-7xl mx-auto" onClick={()=>navigate("/details")}>
       {/* Counselor Card */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden text-sm">
         <img

@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useUser } from '../Context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate=useNavigate();
   const { user } = useUser();
   const dropdownRef = useRef ();
 
@@ -39,8 +41,8 @@ const Navbar = () => {
 
             {/* Center Menu - Hidden on Mobile */}
             <div className="hidden md:flex items-center space-x-4">
-              <a className="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-base font-medium">Home</a>
-              <a  className="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-base font-medium">About Us</a>
+              <a className="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-base font-medium" onClick={()=>navigate("/")}>Home</a>
+              <a  className="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-base font-medium" onClick={()=>navigate("/aboutus")}>About Us</a>
               <a className="text-blue-600 hover:text-blue-800 px-3 py-2 rounded-md text-base font-medium">Contact Us</a>
             </div>
 
@@ -61,8 +63,8 @@ const Navbar = () => {
                   </button>
                   {dropdownOpen && (
                   <div   className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
-                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Activity</a>
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/notifications")}>Notifications</a>
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/myactivity")}>My Activity</a>
                   <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login as Counselor</a>
                   <div className="flex justify-center">
                     <button className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-md">
@@ -110,9 +112,9 @@ const Navbar = () => {
                 </button>
                 {dropdownOpen && (
                  <div className="pl-2">
-                 <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Notifications</a>
-                 <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Activity</a>
-                 <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login as Counselor</a>
+                 <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/notifications")}>Notifications</a>
+                 <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/myactivity")}>My Activity</a>
+                 <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/counselor/maintabe")}>Login as Counselor</a>
                  <button className="w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</button>
                </div>
                

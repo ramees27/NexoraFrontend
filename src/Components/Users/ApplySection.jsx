@@ -1,6 +1,8 @@
 import React from 'react'
 import { FaCheckCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 const ApplySection = () => {
+    const navigate=useNavigate();
   return (
     <section className="bg-[#F0FAFF] py-16 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 shadow-md rounded-xl overflow-hidden border border-gray-200 min-h-[500px]">
@@ -26,9 +28,9 @@ const ApplySection = () => {
                 <FaCheckCircle className="text-white mt-1" />
                 Set your own rates and schedule
               </li>
-            </ul>
+            </ul>   
           </div>
-          <button className="bg-white text-[#3C4FE0] font-semibold py-2 px-6 rounded-md hover:bg-gray-100 transition">
+          <button className="bg-white text-[#3C4FE0] font-semibold py-2 px-6 rounded-md hover:bg-gray-100 transition" onClick={()=>navigate("/counselorapllication")}>
             Apply Now
           </button>
         </div>
@@ -56,7 +58,7 @@ const ApplySection = () => {
               </li>
             </ul>
           </div>
-          <button className="bg-[#1C2EF2] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a29d0] transition">
+          <button onClick={()=>navigate("/search")} className="bg-[#1C2EF2] text-white font-semibold py-2 px-6 rounded-md hover:bg-[#1a29d0] transition">
             Find a Counselor
           </button>
         </div>
