@@ -1,22 +1,26 @@
 import { useFormik } from 'formik';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from "yup";
+import { usePost } from '../../api/authapi';
+import { toast } from 'react-toastify';
 
 const UserRegistration = () => {
+    const navigate = useNavigate();
 
     const formik = useFormik({
         initialValues: {
-            username: "",
+            userName: "",
             email: "",
             password: "",
             confirmPassword: "",
         },
         validationSchema: Yup.object({
-            username: Yup.string()
-            .matches(/^\S+$/, "Username must not contain spaces")
-            .min(4, "Username must be at least 4 characters")
-            .required("User Name is required"),
-        
+            userName: Yup.string()
+                .matches(/^\S+$/, "Username must not contain spaces")
+                .min(4, "Username must be at least 4 characters")
+                .required("User Name is required"),
+
             email: Yup.string()
                 .email("Invalid email format")
                 .required("E-mail is required"),
@@ -27,10 +31,23 @@ const UserRegistration = () => {
                 .oneOf([Yup.ref("password"), null], "Passwords must match")
                 .required("Confirm Password is required"),
         }),
-        onSubmit: (values) => {
-            console.log("Form Submitted", values);
+        onSubmit: async (values) => {
+            const { confirmPassword, ...datasend } = values;
+
+            const result = await usePost("/User/register", datasend);
+            console.log(result);
+            if (result?.statusCode == 200) {
+                toast.success('Registered successfully!');
+                   navigate("/")
+            }
+            else {
+                toast.error("Error in Registration")
+            }
+
+
         },
     });
+
 
     return (
         <div className="min-h-screen sm:min-h-[80vh] flex flex-col justify-center items-center px-4 bg-white">
@@ -40,7 +57,7 @@ const UserRegistration = () => {
 
             {/* Back Button */}
             <div className="sticky top-4 left-4 self-start z-20">
-                <button className="bg-black text-white text-sm px-4 py-2 rounded-md flex items-center gap-2">
+                <button onClick={() => navigate("/")} className="bg-black text-white text-sm px-4 py-2 rounded-md flex items-center gap-2">
                     <span className="text-lg">←</span> Back to Home
                 </button>
             </div>
@@ -66,16 +83,16 @@ const UserRegistration = () => {
                         <label className="block font-semibold mb-1">User Name</label>
                         <input
                             type="text"
-                            name="username"
+                            name="userName"
                             onChange={formik.handleChange}
                             onBlur={formik.handleBlur}
-                            value={formik.values.username}
+                            value={formik.values.userName}
                             className="w-full px-4 py-2 rounded-md shadow bg-gray-100 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Enter your name"
                         />
-                        {formik.touched.username && formik.errors.username && (
+                        {formik.touched.userName && formik.errors.userName && (
                             <p className="text-sm text-red-600 ">
-                                {formik.errors.username}
+                                {formik.errors.userName}
                             </p>
                         )}
                     </div>
@@ -149,7 +166,7 @@ const UserRegistration = () => {
                 {/* Sign in link */}
                 <p className="text-center mt-1 text-sm">
                     Already have an account?{" "}
-                    <a href="#" className="text-blue-700 hover:underline font-medium">
+                    <a href="/userlogin" className="text-blue-700 hover:underline font-medium">
                         Sign in
                     </a>
                 </p>

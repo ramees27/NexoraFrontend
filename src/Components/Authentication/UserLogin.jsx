@@ -1,8 +1,14 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { usePost } from "../../api/authapi";
+import { toast } from "react-toastify";
+import { useUser } from "../Context/UserContext";
 
 const LoginForm = () => {
+  const {user,}=useUser()
+  const navigate=useNavigate();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -12,14 +18,23 @@ const LoginForm = () => {
       email: Yup.string()
         .email("Invalid email format")
         .required("E-mail is required"),
-      password: Yup.string()
+        password: Yup.string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required")
     }),
-    onSubmit: (values) => {
-      console.log("Login Successful:", values);
+    onSubmit:async  (values) => {
+      const result=await usePost("/User/Login",values)
+       if (result?.statusCode == 200) {
+                      toast .success('Login successfull!');
+                         navigate("/userlogin")
+                         
+                  }
+                  else {
+                      toast.error("Error in Login")
+                  }
     }
   });
+  
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center items-center px-4">
@@ -28,7 +43,7 @@ const LoginForm = () => {
 
       {/* Back Button */}
       <div className="sticky top-4 left-4 self-start z-20">
-        <button className="bg-black text-white text-sm px-4 py-2 rounded-md flex items-center gap-2">
+        <button onClick={()=>navigate("/")} className="bg-black text-white text-sm px-4 py-2 rounded-md flex items-center gap-2">
           <span className="text-lg">←</span> Back to Home
         </button>
       </div>
@@ -94,8 +109,8 @@ const LoginForm = () => {
 
         {/* Signup Prompt */}
         <p className="text-center mt-6 text-sm">
-          No account?{" "}
-          <a href="#" className="text-blue-700 hover:underline font-medium">
+          No account?
+          <a href="/userregistration" className="text-blue-700 hover:underline font-medium">
             Sign up
           </a>
         </p>

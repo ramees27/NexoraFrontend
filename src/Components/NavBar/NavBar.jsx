@@ -50,8 +50,8 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-2">
               {!user ? (
                 <>
-                  <a href="/login" className="border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-100">Login</a>
-                  <a href="/register" className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-800">Register</a>
+                  <a  href="/userlogin"  className="border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-100" >Login</a>
+                  <a  href="/userregistration"  className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-800">Register</a>
                 </>
               ) : (
                 <div ref={dropdownRef} className="relative">
@@ -65,7 +65,7 @@ const Navbar = () => {
                   <div   className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
                   <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/notifications")}>Notifications</a>
                   <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/myactivity")}>My Activity</a>
-                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Login as Counselor</a>
+                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" >Login as Counselor</a>
                   <div className="flex justify-center">
                     <button className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-md">
                       Logout
@@ -99,8 +99,8 @@ const Navbar = () => {
 
             {!user ? (
               <div className="mt-3 space-y-2">
-                <a href="/login" className="block border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-medium text-center hover:bg-blue-100">Login</a>
-                <a href="/register" className="block bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium text-center hover:bg-blue-800">Register</a>
+                <a href="/userlogin" className="block border border-blue-600 text-blue-600 px-4 py-2 rounded-md text-sm font-medium text-center hover:bg-blue-100" >Login</a>
+                <a href="/userregistration" className="block bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium text-center hover:bg-blue-800">Register</a>
               </div>
             ) : (
               <div  ref={dropdownRef} className="mt-3 space-y-1 border-t pt-3">

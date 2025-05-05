@@ -11,6 +11,8 @@ import Navbar from './Components/NavBar/NavBar'
 
 import RouteConfig from './RouteConfig'
 import UserLogin from './Components/Authentication/UserLogin'
+import { Card } from './Components/ui/card'
+import { ToastContainer } from 'react-toastify'
 
 
 
@@ -23,10 +25,13 @@ function App() {
     <BrowserRouter>
     
     
+    
   
   <RouteConfig/>
     </BrowserRouter>
+    <ToastContainer/>
     </UserContext>
+  
 
      
   )
