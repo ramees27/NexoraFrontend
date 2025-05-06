@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { usePost } from "../../api/authapi";
+import { checkLoginStatus, usePost } from "../../api/authapi";
 import { toast } from "react-toastify";
-import { useUser } from "../Context/UserContext";
+import { UsersContext } from "../Context/UserContext";
 
 const LoginForm = () => {
-  const {user,}=useUser()
-  const navigate=useNavigate();
+  const { user, setUser } = useContext(UsersContext)
+  const navigate = useNavigate();
   const formik = useFormik({
     initialValues: {
       email: "",
@@ -18,23 +18,36 @@ const LoginForm = () => {
       email: Yup.string()
         .email("Invalid email format")
         .required("E-mail is required"),
-        password: Yup.string()
+      password: Yup.string()
         .min(8, "Password must be at least 8 characters")
         .required("Password is required")
     }),
-    onSubmit:async  (values) => {
-      const result=await usePost("/User/Login",values)
-       if (result?.statusCode == 200) {
-                      toast .success('Login successfull!');
-                         navigate("/userlogin")
-                         
-                  }
-                  else {
-                      toast.error("Error in Login")
-                  }
+    onSubmit: async (values) => {
+      const result = await usePost("/User/Login", values)
+      if (result?.statusCode == 200) {
+        toast.success('Login successfull!');
+
+
+        const res = await checkLoginStatus();
+        
+          
+        if (res) {
+          setUser(true); 
+          console.log(user)
+    
+        } else {
+          setUser(false);
+        }
+
+        navigate("/");
+      } else {
+        toast.error("Error in login");
+      }
+    
     }
+    
   });
-  
+
 
   return (
     <div className="min-h-screen bg-white flex flex-col justify-center items-center px-4">
@@ -43,7 +56,7 @@ const LoginForm = () => {
 
       {/* Back Button */}
       <div className="sticky top-4 left-4 self-start z-20">
-        <button onClick={()=>navigate("/")} className="bg-black text-white text-sm px-4 py-2 rounded-md flex items-center gap-2">
+        <button onClick={() => navigate("/")} className="bg-black text-white text-sm px-4 py-2 rounded-md flex items-center gap-2">
           <span className="text-lg">←</span> Back to Home
         </button>
       </div>
@@ -53,13 +66,13 @@ const LoginForm = () => {
         onSubmit={formik.handleSubmit}
         className="bg-white shadow-2xl rounded-xl w-full max-w-md p-8 mt-10 z-10"
       >
-       <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-[#1E2A78] to-[#384EDE] bg-clip-text text-transparent">
-      NEXORA   </h2>
-            
+        <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-[#1E2A78] to-[#384EDE] bg-clip-text text-transparent">
+          NEXORA   </h2>
+
 
         <h3 className="text-2xl font-bold text-center mt-4">Welcome back</h3>
         <p className="text-center text-gray-600 mb-6">
-        Sign in to your account        </p>
+          Sign in to your account        </p>
 
         <div className="space-y-4">
           {/* Email Field */}

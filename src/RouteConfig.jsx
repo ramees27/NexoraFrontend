@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import HomePage from './Components/Users/HomePage'
 
@@ -25,7 +25,27 @@ import AdminReview from './Components/Admin/AdminReview'
 import AdminBookings from './Components/Admin/AdminBookings'
 import AdminReceipt from './Components/Admin/AdminReceipt'
 
+import UserContext, { UsersContext } from './Components/Context/UserContext'
+import { checkLoginStatus, useget } from './api/authapi'
+
 const RouteConfig = () => {
+   const {setUser}=useContext(UsersContext)
+  
+   useEffect(() => {
+    const fetchLoginStatus = async () => {
+      const res = await checkLoginStatus();
+      if (res) {
+        setUser(true);
+        console.log("User is logged in");
+      } else {
+        setUser(false);
+        console.log("User is not logged in");
+      }
+    };
+  
+    fetchLoginStatus();
+  }, []);
+
   return (
    <Routes>
 
@@ -67,6 +87,7 @@ const RouteConfig = () => {
 
   
    </Routes>
+   
   )
 }
 

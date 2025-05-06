@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useUser } from '../Context/UserContext';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { UsersContext } from '../Context/UserContext';
 import { useNavigate } from 'react-router-dom';
+import { logOut } from '../../api/authapi';
+import { toast } from 'react-toastify';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate=useNavigate();
-  const { user } = useUser();
+  const { user,setUser } = useContext(UsersContext);
   const dropdownRef = useRef ();
 
   const toggleDropdown = (e) => {
@@ -25,6 +27,18 @@ const Navbar = () => {
       document.removeEventListener('mousedown', handleClickOutside,true);
     };
   }, []);
+
+  const handleLogout= async ()=>{
+    const res=await logOut()
+    if(res!=null){
+      setUser(false)
+      toast.success("Succusfully logout")
+    }
+    else{
+    toast.error("Error in Logout")
+    }
+
+  }
 
   return (
     <div className="fixed top-0 left-0 w-full z-50">
@@ -67,7 +81,7 @@ const Navbar = () => {
                   <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/myactivity")}>My Activity</a>
                   <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" >Login as Counselor</a>
                   <div className="flex justify-center">
-                    <button className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-md">
+                    <button className="px-4 py-2 text-sm text-red-600 hover:bg-gray-100 rounded-md" onClick={handleLogout}>
                       Logout
                     </button>
                   </div>
@@ -115,7 +129,7 @@ const Navbar = () => {
                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/notifications")}>Notifications</a>
                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/myactivity")}>My Activity</a>
                  <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={()=>navigate("/counselor/maintabe")}>Login as Counselor</a>
-                 <button className="w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Logout</button>
+                 <button className="w-full text-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100" onClick={handleLogout}>Logout</button>
                </div>
                
                 )}

@@ -1,13 +1,15 @@
 import React, { useState,createContext,useContext } from 'react'
 
-const UsersContext = createContext();
-export const useUser = () => useContext(UsersContext);
+export const UsersContext = createContext();
+
+
 const UserContext = ({children}) => {
     const [user, setUser] = useState(false);
+    // const[isLogined,setisLogined]=useState(false)
   return (
-    <div> <UsersContext.Provider value={{ user,setUser}}>
+    <UsersContext.Provider value={{ user,setUser}}>
     {children}
-  </UsersContext.Provider></div>
+  </UsersContext.Provider>
   )
 }
 
