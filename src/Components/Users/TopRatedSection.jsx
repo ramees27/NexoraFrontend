@@ -63,10 +63,10 @@ const TopRatedSection = () => {
                 {Array.from({ length: top.avg_rating }, (_, i) => (
                   <FaStar key={i} />
                 ))}
-                {/* {top.avg_rating === 0 && <span className="text-gray-400">No rating</span>} */}
+         
               </div>
 
-              {/* Specializations */}
+        
               <div className="flex flex-wrap gap-2 mt-2">
                 {top.specialization.split(",").map((spec, idx) => (
                   <span
@@ -78,7 +78,7 @@ const TopRatedSection = () => {
                 ))}
               </div>
 
-              {/* Price Info */}
+            
               <div className="mt-4 flex justify-between items-center text-sm">
                 <span className="text-gray-500">Starting from</span>
                 <span className="text-[#040B57] font-bold">$75/hour</span>
