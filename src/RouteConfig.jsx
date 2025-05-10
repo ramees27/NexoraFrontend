@@ -52,7 +52,7 @@ const RouteConfig = () => {
     <Route path='/'element={<Layout/>}>
     <Route index element={<HomePage />} />
     <Route path='/search' element={<Search/>}/>
-    <Route path='/details' element={<Details />}/>
+    <Route path='/details/:id' element={<Details />}/>
     <Route path='/counselorchat' element={<CounselorChat/>}/>
     <Route path='/notifications' element={<Notifications/>}/>
     <Route path='/aboutus' element={<AboutUs/>}/>
