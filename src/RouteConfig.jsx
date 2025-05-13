@@ -33,13 +33,18 @@ const RouteConfig = () => {
   
    useEffect(() => {
     const fetchLoginStatus = async () => {
-      const res = await checkLoginStatus();
+    
+      try{
+    const res=  await checkLoginStatus();
+    console.log(res)
       if (res) {
-        setUser(true);
-        console.log("User is logged in");
-      } else {
-        setUser(false);
-        console.log("User is not logged in");
+  setUser(true);
+  console.log("User is logged in");
+}
+        
+      } catch(error) {
+       
+        console.log("User is not logged in",error);
       }
     };
   

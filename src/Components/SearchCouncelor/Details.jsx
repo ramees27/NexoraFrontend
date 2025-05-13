@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaStar, FaStarHalfAlt } from 'react-icons/fa';
 import About from './About';
 import Reviews from './Reviews';
 import BookSessionModal from './BookSessionModal';
 import { useParams } from 'react-router-dom';
 import { useget } from '../../api/authapi';
+import { toast } from "react-toastify";
+import { UsersContext } from '../Context/UserContext';
 
 const Details = () => {
   const [activeTab, setActiveTab] = useState('about');
   const [isOpen, setIsOpen] = useState(false);
   const [Counselor, setCounselor] = useState([])
   const { id } = useParams();
-
+const {user}=useContext(UsersContext)
   useEffect(() => {
     const GetCounselor = async () => {
       try {
@@ -83,14 +85,22 @@ const Details = () => {
 
 
           <div>
-            <button
-              className="w-full bg-indigo-700 text-white py-3 rounded-md text-lg font-semibold hover:bg-indigo-800 transition"
-              onClick={() => setIsOpen(true)}
-            >
-              Book a Session
-            </button>
+           <button
+  className="w-full bg-indigo-700 text-white py-3 rounded-md text-lg font-semibold hover:bg-indigo-800 transition"
+  onClick={() => {
+    if (user) {
+      setIsOpen(true);
+    } else {
+      toast.warning("Please login to book a session", {
+        position: "top-right",
+      });
+    }
+  }}
+>
+  Book a Session
+</button>
 
-            {isOpen && <BookSessionModal onClose={() => setIsOpen(false)} />}
+            {isOpen && <BookSessionModal data={Counselor} onClose={() => setIsOpen(false)} />}
 
           </div>
         </div>

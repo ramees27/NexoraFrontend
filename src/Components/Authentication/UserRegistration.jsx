@@ -38,7 +38,7 @@ const UserRegistration = () => {
             console.log(result);
             if (result?.statusCode == 200) {
                 toast.success('Registered successfully!');
-                   navigate("/")
+                   navigate("/userlogin")
             }
             else {
                 toast.error("Error in Registration")

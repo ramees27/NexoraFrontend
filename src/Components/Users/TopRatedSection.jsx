@@ -25,6 +25,7 @@ const TopRatedSection = () => {
     GetTopCounselors();
   }, []);
 
+  
 
   return (
     <section className="py-12 bg-white">
@@ -40,12 +41,12 @@ const TopRatedSection = () => {
         </div>
 
         {/* Counselor Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" >
           {counselor.map((top) => (
             <div
               key={top.counselors_id}
               className="bg-white rounded-2xl overflow-hidden shadow-[0_10px_25px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_35px_rgba(0,0,0,0.15)] transition transform hover:-translate-y-1"
-            >
+             onClick={() => navigate(`/details/${top.counselors_id}`)}>
               {/* Image */}
               <div className="h-60 bg-gray-100 w-full overflow-hidden">
                 <img

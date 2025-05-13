@@ -1,10 +1,15 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const CNavBar = () => {
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
+  const LogOutasCouncelor=()=>{
+    toast.success("Logout Succussfully")
+    navigate("/")
+  }
 
   return (
     <div className="fixed top-0 left-0 w-full z-50">
@@ -43,7 +48,7 @@ const CNavBar = () => {
                     Notifications
                   </button>
                   <button
-                    onClick={() => alert("Logged out as Counselor")}
+                    onClick={LogOutasCouncelor}
                     className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                   >
                     Logout as Counselor

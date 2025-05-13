@@ -29,7 +29,7 @@ const LoginForm = () => {
 
 
         const res = await checkLoginStatus();
-        
+        console.log(res)
           
         if (res) {
           setUser(true); 

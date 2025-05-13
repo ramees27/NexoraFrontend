@@ -3,8 +3,12 @@ import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import FAQSection from './FAQSection';
 import Footer from '../../Footer/Footer';
+import { usePost } from '../../../api/authapi';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const CouncelorApplicationForm = () => {
+    const navigate = useNavigate();
     const validationSchema = Yup.object({
         fullName: Yup.string()
             .trim()
@@ -28,9 +32,9 @@ const CouncelorApplicationForm = () => {
 
         bio: Yup.string()
             .required("Professional Bio is required")
-            .test("word-count", "Bio must be at least 30 words", function (value) {
+            .test("word-count", function (value) {
                 if (!value) return false;
-                return value.trim().split(/\s+/).length >= 30;
+                return value.trim().split(/\s+/).length >= 3;
             }),
 
         specializations: Yup.string()
@@ -69,8 +73,38 @@ const CouncelorApplicationForm = () => {
         education: [{ degree: "", certificate: null }],
     };
 
-    const handleSubmit = (values) => {
-        console.log("Form submitted:", values);
+    const handleSubmit = async (values) => {
+        try {
+            const formData = new FormData();
+            formData.append("full_name", values.fullName);
+            formData.append("specialization", values.specializations);
+            formData.append("short_bio", values.bio);
+            formData.append("mobile_number", values.phone);
+            formData.append("experience", values.experience);
+            formData.append("hourly_rate", values.rate);
+            formData.append("upi_id", values.upi);
+
+            // Optional: If you add a profile image input
+            // formData.append("ProfileImage", values.profileImage);
+
+            const response = await usePost("/CouncelorAuth/Apply-Councelor", formData);
+
+            // Now handle education uploads
+            for (const edu of values.education) {
+                const eduForm = new FormData();
+                eduForm.append("CounselorId", response.data);
+                eduForm.append("Qualification", edu.degree);
+                eduForm.append("CertificateImage", edu.certificate);
+
+                await usePost("/Councelor/add", eduForm);
+            }
+
+            console.log("Success", response.data);
+            toast.success("Your application was submitted successfully")
+            navigate("/")
+        } catch (error) {
+            console.log("Error", error);
+        }
     };
     const inputClass =
         "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1a237e] focus:border-transparent transition";
@@ -194,7 +228,12 @@ const CouncelorApplicationForm = () => {
                             </Form>
                         )}
                     </Formik>
+                    
                 </div>
+                <p className="text-sm text-center text-gray-600 mt-2">
+                        After you submit, our team will review your application. Once verified, you’ll receive a notification. <br/> You can then login as a counselor from the <strong>My Details</strong> section. We’ll reach out to you soon.
+                    </p>
+
             </div>
             <FAQSection />
             <Footer />
