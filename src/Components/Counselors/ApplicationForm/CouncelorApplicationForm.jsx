@@ -152,7 +152,7 @@ const CouncelorApplicationForm = () => {
                                 </div>
 
                                 <div>
-                                    <Field as="textarea" name="bio" placeholder="Professional Bio*" className={`${inputClass} h-24`} />
+                                    <Field as="textarea" name="bio" placeholder="Professional Bio....ex:- Dr. Anjali Menon is a certified career counselor with over 8 years of experience guiding students and professionals toward meaningful career paths. She specializes in academic planning, competitive exam guidance, and career transitions. Known for her empathetic approach and personalized strategies, Dr. Menon has helped 1000+ individuals gain clarity and confidence in their career choices. She combines psychometric assessments with real-world insights to deliver impactful counseling sessions.*" className={`${inputClass} h-24`} />
                                     <ErrorMessage name="bio" component="div" className="text-red-500 text-sm" />
                                 </div>
 

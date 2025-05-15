@@ -85,7 +85,7 @@ const TopRatedSection = () => {
 
                 <div className="mt-4 flex justify-between items-center text-sm">
                   <span className="text-gray-500">Starting from</span>
-                  <span className="text-[#040B57] font-bold">$75/hour</span>
+                  <span className="text-[#040B57] font-bold">${top.hourly_rate}</span>
                 </div>
               </div>
             </div>

@@ -1,24 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaStar } from 'react-icons/fa';
+import { useget } from '../../../api/authapi';
 
 const CReview = () => {
-    const reviews = [
-        {
-          name: 'Ramees',
-          stars: 4,
-          feedback: 'I had doubts about pursuing higher education abroad, but this session helped me explore all my options with complete clarity. The information shared was practical and up to date. Totally worth it!',
-        },
-        {
-          name: 'Sabith',
-          stars: 3,
-          feedback: 'The session had potential, but it felt a little rushed. I couldn’t get all my doubts addressed in the limited time. It would be great if future sessions allowed more flexibility.',
-        },
-        {
-          name: 'Sabith',
-          stars: 4,
-          feedback: 'I appreciate the personalized guidance. I feel much more focused now!',
-        },
-      ];
+  const [avgRating, setAvgRating] = useState([])
+  const [reviews, setReviews] = useState([])
+  const getavreageRating = async () => {
+    try {
+      const response = await useget("/Review/Get-Average-Rating")
+      setAvgRating(response.data)
+      console.log(response.data)
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+  const getAllReview = async () => {
+    try {
+      const response = await useget("/Review/Get/Review/by/ConcelorId")
+      setReviews(response.data);
+      console.log(response.data)
+    }
+    catch (error) {
+      console.log(error)
+    }
+
+  }
+  useEffect(() => {
+    getavreageRating();
+    getAllReview();
+  }, [])
+
+
   return (
     <div className="p-6 md:p-12 max-w-5xl mx-auto mt-16">
       <div className="text-center mb-8">
@@ -32,22 +45,36 @@ const CReview = () => {
 
       <div className="flex flex-col items-center mb-6">
         <FaStar className="text-yellow-400 text-5xl md:text-6xl" />
-        <p className="text-indigo-900 text-4xl font-bold mt-2">4.0</p>
+        <p className="text-indigo-900 text-4xl font-bold mt-2">{avgRating.rating}.0</p>
       </div>
 
       <div className="space-y-4">
         {reviews.map((review, index) => (
-          <div key={index} className="bg-blue-50 p-4 rounded shadow-sm">
-            <p className="font-semibold">{review.name}</p>
-            <div className="flex gap-1 text-yellow-400 mb-2">
-              {[...Array(5)].map((_, i) => (
-                <FaStar key={i} className={i < review.stars ? '' : 'text-gray-300'} />
-              ))}
+          <div key={index} className="bg-blue-50 p-4 rounded-xl shadow-sm">
+
+            {/* Top row: Username and stars */}
+            <div className="flex justify-between items-center mb-1">
+              <p className="font-semibold text-indigo-900">{review.username}</p>
+              <div className="flex gap-1 text-yellow-400">
+                {[...Array(5)].map((_, i) => (
+                  <FaStar key={i} className={i < review.rating ? '' : 'text-gray-300'} />
+                ))}
+              </div>
             </div>
-            <p className="text-gray-700 text-sm">{review.feedback}</p>
+
+            {/* Review and Date row */}
+<div className="flex justify-between items-start w-full">
+  <p className="text-gray-700 text-sm text-left">{review.review}</p>
+  <p className="text-xs text-gray-500 text-right min-w-fit">
+    {new Date(review.created_at).toLocaleDateString()}
+  </p>
+</div>
+
           </div>
         ))}
       </div>
+
+
     </div>
   )
 }

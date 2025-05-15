@@ -70,7 +70,7 @@ const PendingTab = () => {
      <>
   {pending === null ? (
     <div className="text-center text-gray-600 mt-10 text-lg font-semibold">
-      No pending bookings
+      No Pending bookings
     </div>
   ) : (
     pending.map((session) => {

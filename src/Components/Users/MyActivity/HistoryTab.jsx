@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaCalendarAlt, FaClock, FaComments } from "react-icons/fa"
+import { FaCalendarAlt, FaClock, FaComments, FaStar } from "react-icons/fa"
 import { useNavigate } from "react-router-dom";
 import { useget, usePost } from "../../../api/authapi";
 import { toast } from "react-toastify";
@@ -17,28 +17,34 @@ const HistoryTab = () => {
   const [checkrating, setCheckRating] = useState(null)
 
 
-  const GetCompleted = async () => {
-    try {
-      const response = await useget("/Booking/student-Get-completed-Bookings");
+ const GetCompleted = async () => {
+  try {
+    const response = await useget("/Booking/student-Get-completed-Bookings");
 
-      const bookingsWithReviewStatus = await Promise.all(
-        response.data.map(async (booking) => {
-          try {
-            const reviewCheck = await useget(`/Review/Check-Review-Exists/${booking.booking_id}`);
-            return { ...booking, reviewExists: reviewCheck.data }; // ✅ boolean
-          } catch (error) {
-            console.error("Error checking review:", error);
-            return { ...booking, reviewExists: false }; // Default to false on error
-          }
-        })
-      );
-
-      setCompleted(bookingsWithReviewStatus);
-    } catch (error) {
-      console.log("Error fetching bookings:", error);
+    if (!response?.data || !Array.isArray(response.data)) {
+      console.log("No bookings found or invalid data format.");
+      setCompleted([]); // set empty array to avoid map error in render
+      return;
     }
-  };
 
+    const bookingsWithReviewStatus = await Promise.all(
+      response.data.map(async (booking) => {
+        try {
+          const reviewCheck = await useget(`/Review/Check-Review-Exists/${booking.booking_id}`);
+          return { ...booking, reviewExists: reviewCheck.data };
+        } catch (error) {
+          console.error("Error checking review:", error);
+          return { ...booking, reviewExists: false };
+        }
+      })
+    );
+
+    setCompleted(bookingsWithReviewStatus);
+  } catch (error) {
+    console.log("Error fetching bookings:", error);
+    setCompleted([]); // fallback
+  }
+};
 
   useEffect(() => {
     GetCompleted()
@@ -69,6 +75,7 @@ const HistoryTab = () => {
       setShowModal(false);
       toast.success("Review Added Suucussfully")
       console.log(response)
+      GetCompleted();
     }
     catch (error) {
       console.log(error)
@@ -78,7 +85,7 @@ const HistoryTab = () => {
 
   return (
     <>
-      {completed === null ? (
+      {completed.length === 0  ? (
         <div className="text-center text-gray-600 mt-10 text-lg font-semibold">
           No Completed bookings
         </div>
@@ -161,16 +168,17 @@ const HistoryTab = () => {
                   Add Review for {selectedSession.full_name}
                 </h3>
 
-                <label className="block mb-2 font-semibold text-sm">Rating (1-5)</label>
-                <input
-                  type="number"
-                  min="1"
-                  max="5"
-                  value={rating}
-                  onChange={(e) => setRating(e.target.value)}
-                  className="w-full p-2 border rounded mb-4"
-                  placeholder="Enter rating"
-                />
+               <div className="flex gap-1">
+      {[...Array(5)].map((_, i) => (
+        <FaStar
+          key={i}
+          onClick={() => setRating(i + 1)}
+          className={`cursor-pointer text-2xl transition-colors ${
+            i < rating ? 'text-yellow-400' : 'text-gray-300'
+          }`}
+        />
+      ))}
+    </div>
 
                 <label className="block mb-2 font-semibold text-sm">Review</label>
                 <textarea

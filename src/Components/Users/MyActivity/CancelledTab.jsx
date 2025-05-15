@@ -22,10 +22,10 @@ const CancelledTab = () => {
 
   return (
     <div className="p-6 space-y-6">
-      {cancelled.length === 0 ?
+      {cancelled === null ?
        (
         <div className="text-center text-gray-500 font-medium py-10">
-          No cancelled bookings.
+          No Cancelled bookings.
         </div>
       ) : 
       (

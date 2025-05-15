@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useNavigate } from "react-router-dom";
-import { checkLoginStatus, usePost } from "../../api/authapi";
+import { checkLoginStatus, useget, usePost } from "../../api/authapi";
 import { toast } from "react-toastify";
 import { UsersContext } from "../Context/UserContext";
 
@@ -23,30 +23,40 @@ const LoginForm = () => {
         .required("Password is required")
     }),
     onSubmit: async (values) => {
-      const result = await usePost("/User/Login", values)
-      if (result?.statusCode == 200) {
-        toast.success('Login successfull!');
+      try {
+        // Attempt to log in
+        const loginResult = await usePost("/User/Login", values);
 
+        if (loginResult?.statusCode === 200) {
+          // Fetch user role
+          const role = await useget("/User/get/role");
 
-        const res = await checkLoginStatus();
-        console.log(res)
-          
-        if (res) {
-          setUser(true); 
-          console.log(user)
-    
+          // Redirect based on role
+          if (role === "admin") {
+            navigate("/admin/admindashboard");
+            return;
+          }
+
+          toast.success("Login successful!");
+
+          // Check login status and set user state
+          const isLoggedIn = await checkLoginStatus();
+          console.log("Login Status:", isLoggedIn);
+
+          setUser(isLoggedIn);
+
+          // Navigate to home if not admin
+          navigate("/");
         } else {
-          setUser(false);
+          toast.error("Login failed. Please check your credentials.");
         }
-
-        navigate("/");
-      } else {
-        toast.error("Error in login");
+      } catch (error) {
+        console.error("Login Error:", error);
+        toast.error("An unexpected error occurred.");
       }
-    
     }
-    
   });
+
 
 
   return (

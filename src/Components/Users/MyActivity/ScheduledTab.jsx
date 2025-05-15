@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaVideo, FaCalendarAlt, FaClock } from "react-icons/fa";
-import { cancelBookings, useget } from '../../../api/authapi';
+import { cancelBookings, useget, usePatch, usePatchForCancel } from '../../../api/authapi';
 import { toast } from 'react-toastify';
 const ScheduledTab = () => {
   const [scheduled, setScheduled] = useState([]);
@@ -16,6 +16,17 @@ const ScheduledTab = () => {
 
     }
 
+  }
+  const cancelbookings=(data)=>{
+    try{
+      const responce=usePatchForCancel(`/Booking/student-Cancelle-Bookings?bookingId=${data}`)
+      console.log(responce.data)
+       getScheduledBookings()
+    }
+    catch(error){
+      console.log((error));
+      
+    }
   }
 
   const editStatus = async (bookingId, status) => {
@@ -44,7 +55,7 @@ const ScheduledTab = () => {
       {scheduled === null?
         (
           <div className="text-center text-gray-500 font-medium py-10">
-            No Scheduled  bookings.
+            No Scheduled  Bookings.
           </div>
         ) : 
         (scheduled.map((session) => (
@@ -92,10 +103,10 @@ const ScheduledTab = () => {
 
                   {/* Right: Buttons */}
                   <div className="flex flex-col items-start md:items-end gap-3">
-                    <button className="bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-4 py-2 rounded"onClick={()=>editStatus(session.booking_id,"cancelled")}>
+                    <button className="bg-red-600 hover:bg-red-700 text-white font-semibold text-sm px-4 py-2 rounded"onClick={()=>cancelbookings(session.booking_id)}>
                       Cancel Session
                     </button>
-                    <button className="bg-[#1a237e] hover:bg-[#0f1a59] text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2">
+                    <button className="bg-[#1a237e] hover:bg-[#0f1a59] text-white font-semibold text-sm px-4 py-2 rounded flex items-center gap-2" onClick={()=>editStatus(session.booking_id,"completed")}>
                       <FaVideo /> Join Session
                     </button>
                   </div>

@@ -28,7 +28,18 @@ export const usePatch = async(url, data1) => {
       return error.response?.data;
     }
   };
+export const usePatchForCancel = async(url) => {
+    try {
+      const response = await axiosapi.patch(url); 
+   
+      return response.data; 
+      
 
+    } catch (error) {
+      console.log(error.response.data);
+      return error.response?.data;
+    }
+  };
 
 
   export const useget = async(url) => {
