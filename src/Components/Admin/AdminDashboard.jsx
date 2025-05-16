@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import AdminRequest from './AdminRequest';
 import { TrendingUp } from "lucide-react"
 import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart"
 import { useget } from '../../api/authapi';
 import { parseISO, format } from "date-fns";
+import { UsersContext } from '../Context/UserContext';
 
 const chartConfig = {
   revenue: {
@@ -21,13 +22,14 @@ const chartConfig = {
 
 
 const AdminDahboard = () => {
-  const [paymentDetails, setPaymentDetails] = useState({})
+  const{paymentDetails,getPaymentdetails}=useContext(UsersContext)
+  
   const [councelorCount, setCouncelorCount] = useState(0)
   const [studentCount, setstudentCount] = useState(0)
   const [bookingCount, setBookingCount] = useState(0)
   const [statusCount, setStatusCount] = useState([])
   const [monthlyreports, setMonthlyreports] = useState([])
- 
+ const[pay,setPay]=useState({})
   const statusColorMap = {
     pending: 'bg-yellow-400',
     request_payment: 'bg-purple-500',
@@ -53,19 +55,7 @@ const AdminDahboard = () => {
     }
   };
 
-  const getPaymentdetails = async () => {
-    try {
-      const responce = await useget("/DashBoard/Get-Payemnt-Summery")
-      setPaymentDetails(responce.data)
-
-
-    }
-    catch (error) {
-      console.log(error);
-
-    }
-
-  }
+ 
 
   const getactiveCouncelors = async () => {
     try {
@@ -140,8 +130,13 @@ const AdminDahboard = () => {
   //   }
 
   // }
+  const GetPay=async()=>{
+ const getDetails= await getPaymentdetails();
+ setPay(getDetails)
+  }
+  
   useEffect(() => {
-    getPaymentdetails();
+    GetPay();
     getactiveCouncelors();
     getactiveStudents();
     getBookingCount();
@@ -155,16 +150,16 @@ const AdminDahboard = () => {
         {/* Top Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
           <div className="bg-white shadow rounded-lg p-4 text-center">
-            <p className="text-sm text-gray-500">Total Revenue</p>
-            <p className="text-xl font-semibold">${paymentDetails.counselor_amount + paymentDetails.commission_amount}</p>
+            <p className="text-sm text-gray-500">Total Received</p>
+            <p className="text-xl font-semibold">${pay?.counselor_amount + pay?.commission_amount}</p>
           </div>
           <div className="bg-white shadow rounded-lg p-4 text-center">
             <p className="text-sm text-gray-500">Expenses</p>
-            <p className="text-xl font-semibold">${paymentDetails.counselor_amount}</p>
+            <p className="text-xl font-semibold">${pay?.counselor_amount}</p>
           </div>
           <div className="bg-white shadow rounded-lg p-4 text-center">
             <p className="text-sm text-gray-500">Profit</p>
-            <p className="text-xl font-semibold">${paymentDetails.commission_amount}</p>
+            <p className="text-xl font-semibold">${pay?.commission_amount}</p>
           </div>
           <div className="bg-white shadow rounded-lg p-4 text-center">
             <p className="text-sm text-gray-500">Active Counselors</p>

@@ -1,16 +1,27 @@
 import { useNavigate, useLocation } from 'react-router-dom';
+import { logOut } from '../../api/authapi';
+import { useContext } from 'react';
+import { UsersContext } from '../Context/UserContext';
+import { toast } from 'react-toastify';
 
 const AdminNavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
+const{setUser}=useContext(UsersContext)
   const isActive = (path) => location.pathname === path;
 
-  const handleLogout = () => {
-    
-    navigate('/userlogin'); // Redirect to login
-  };
+   const handleLogout = async () => {
+    const res = await logOut()
+    if (res != null) {
+      setUser(false)
+      toast.success("Succusfully logout")
+      navigate('/userlogin'); 
+    }
+    else {
+      toast.error("Error in Logout")
+    }
 
+  }
   return (
     <div className="w-full p-4">
       {/* Heading Section with Logout */}

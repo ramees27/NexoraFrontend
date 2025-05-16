@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useget } from '../../api/authapi';
+import { UsersContext } from '../Context/UserContext';
 
 const AdminPayments = () => {
   const [payments, setPayments] = useState([])
+  const[PaymentSummery,setPaymentsSummery]=useState([])
+  const[pay,setPay]=useState({})
+  const{getPaymentdetails}=useContext(UsersContext)
   const getPayments = async () => {
     try {
       const response = await useget("/AdminPayment/payment-Details")
       setPayments(response.data)
-      console.log(response.data);
+     
     }
     catch (error) {
       console.log(error);
@@ -15,31 +19,52 @@ const AdminPayments = () => {
     }
 
   }
+
+   const getPaymentsSummery = async () => {
+    try {
+      const response = await useget("/AdminPayment/payment-summary")
+      setPaymentsSummery(response.data)
+      console.log(response);
+    }
+    catch (error) {
+      console.log(error);
+
+    }
+
+  }
+  const  paymet=async()=>{
+    const res= await getPaymentdetails()
+    setPay(res)
+   
+
+  }
   useEffect(() => {
     getPayments()
+    paymet();
+    getPaymentsSummery()
   }, [])
   return (
     <div className="p-4 space-y-6">
       <div className="grid grid-cols-5 gap-4">
         <div className="bg-white rounded-xl shadow p-4 text-center">
-          <p>Total Receipt</p>
-          <h2 className="text-xl font-bold"></h2>
+          <p>Total Received Amount</p>
+          <h2 className="text-xl font-bold">${pay?.commission_amount + pay?.counselor_amount}</h2>
         </div>
         <div className="bg-white rounded-xl shadow p-4 text-center">
-          <p>Total Payments</p>
-          <h2 className="text-xl font-bold">₹270</h2>
+          <p>Total Paid Amount</p>
+          <h2 className="text-xl font-bold">${PaymentSummery.paidAmount}</h2>
         </div>
         <div className="bg-white rounded-xl shadow p-4 text-center">
           <p>Payment Due</p>
-          <h2 className="text-xl font-bold">₹30</h2>
+          <h2 className="text-xl font-bold">${PaymentSummery.pendingAmount}</h2>
         </div>
         <div className="bg-white rounded-xl shadow p-4 text-center">
           <p>Platform Fee</p>
-          <h2 className="text-xl font-bold">₹30</h2>
+          <h2 className="text-xl font-bold">${PaymentSummery.commisionAmout}</h2>
         </div>
         <div className="bg-white rounded-xl shadow p-4 text-center">
-          <p>Total Expenses</p>
-          <h2 className="text-xl font-bold">₹300</h2>
+          <p>Total Expenses (Paid+Due)</p>
+          <h2 className="text-xl font-bold">${PaymentSummery.paidAmount+PaymentSummery.pendingAmount}</h2>
         </div>
       </div>
 

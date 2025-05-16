@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Formik, Form, Field, FieldArray, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import FAQSection from './FAQSection';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 
 const CouncelorApplicationForm = () => {
     const navigate = useNavigate();
+
     const validationSchema = Yup.object({
         fullName: Yup.string()
             .trim()
@@ -39,19 +40,17 @@ const CouncelorApplicationForm = () => {
 
         specializations: Yup.string()
             .required("Specializations are required")
-            .test(
-                "max-three",
-                "You can specify a maximum of 3 specializations",
-                function (value) {
-                    if (!value) return false;
-                    const items = value.split(",").map((item) => item.trim()).filter(Boolean);
-                    return items.length > 0 && items.length <= 3;
-                }
-            ),
+            .test("max-three", "You can specify a maximum of 3 specializations", function (value) {
+                if (!value) return false;
+                const items = value.split(",").map((item) => item.trim()).filter(Boolean);
+                return items.length > 0 && items.length <= 3;
+            }),
 
         upi: Yup.string()
             .trim()
             .required("UPI ID is required"),
+
+        ProfileImage: Yup.mixed().required("Profile image is required"),
 
         education: Yup.array().of(
             Yup.object({
@@ -61,7 +60,6 @@ const CouncelorApplicationForm = () => {
         ),
     });
 
-
     const initialValues = {
         fullName: "",
         phone: "",
@@ -70,6 +68,7 @@ const CouncelorApplicationForm = () => {
         bio: "",
         specializations: "",
         upi: "",
+        ProfileImage: null,
         education: [{ degree: "", certificate: null }],
     };
 
@@ -83,31 +82,28 @@ const CouncelorApplicationForm = () => {
             formData.append("experience", values.experience);
             formData.append("hourly_rate", values.rate);
             formData.append("upi_id", values.upi);
-
-            // Optional: If you add a profile image input
-            // formData.append("ProfileImage", values.profileImage);
+            formData.append("ProfileImage", values.ProfileImage);
 
             const response = await usePost("/CouncelorAuth/Apply-Councelor", formData);
 
-            // Now handle education uploads
             for (const edu of values.education) {
                 const eduForm = new FormData();
                 eduForm.append("CounselorId", response.data);
                 eduForm.append("Qualification", edu.degree);
                 eduForm.append("CertificateImage", edu.certificate);
-
                 await usePost("/Councelor/add", eduForm);
             }
 
-            console.log("Success", response.data);
-            toast.success("Your application was submitted successfully")
-            navigate("/")
+            toast.success("Your application was submitted successfully");
+            navigate("/");
         } catch (error) {
-            console.log("Error", error);
+            console.error("Error", error);
+            toast.error("Something went wrong. Please try again.");
         }
     };
-    const inputClass =
-        "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1a237e] focus:border-transparent transition";
+
+    const inputClass = "w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1a237e] focus:border-transparent transition";
+
     return (
         <>
             <div className="bg-[#f6f8fa] py-10 px-4 sm:px-8">
@@ -152,7 +148,7 @@ const CouncelorApplicationForm = () => {
                                 </div>
 
                                 <div>
-                                    <Field as="textarea" name="bio" placeholder="Professional Bio....ex:- Dr. Anjali Menon is a certified career counselor with over 8 years of experience guiding students and professionals toward meaningful career paths. She specializes in academic planning, competitive exam guidance, and career transitions. Known for her empathetic approach and personalized strategies, Dr. Menon has helped 1000+ individuals gain clarity and confidence in their career choices. She combines psychometric assessments with real-world insights to deliver impactful counseling sessions.*" className={`${inputClass} h-24`} />
+                                    <Field as="textarea" name="bio" placeholder="Professional Bio..." className={`${inputClass} h-24`} />
                                     <ErrorMessage name="bio" component="div" className="text-red-500 text-sm" />
                                 </div>
 
@@ -164,6 +160,17 @@ const CouncelorApplicationForm = () => {
                                 <div>
                                     <Field name="upi" placeholder="UPI ID (e.g. your@upi)" className={inputClass} />
                                     <ErrorMessage name="upi" component="div" className="text-red-500 text-sm" />
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload Profile Image*</label>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={(event) => setFieldValue("ProfileImage", event.currentTarget.files[0])}
+                                        className={inputClass}
+                                    />
+                                    <ErrorMessage name="ProfileImage" component="div" className="text-red-500 text-sm" />
                                 </div>
 
                                 <div className="border-b border-gray-300 my-4"></div>
@@ -185,7 +192,6 @@ const CouncelorApplicationForm = () => {
                                                             className="text-red-500 text-sm"
                                                         />
                                                     </div>
-
                                                     <div>
                                                         <input
                                                             type="file"
@@ -228,20 +234,17 @@ const CouncelorApplicationForm = () => {
                             </Form>
                         )}
                     </Formik>
-                    
                 </div>
-                <p className="text-sm text-center text-gray-600 mt-2">
-                        After you submit, our team will review your application. Once verified, you’ll receive a notification. <br/> You can then login as a counselor from the <strong>My Details</strong> section. We’ll reach out to you soon.
-                    </p>
 
+                <p className="text-sm text-center text-gray-600 mt-2">
+                    After you submit, our team will review your application. Once verified, you’ll receive a notification. <br />
+                    You can then login as a counselor from the <strong>My Details</strong> section. We’ll reach out to you soon.
+                </p>
             </div>
             <FAQSection />
             <Footer />
         </>
+    );
+};
 
-    )
-
-}
-
-
-export default CouncelorApplicationForm
+export default CouncelorApplicationForm;

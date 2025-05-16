@@ -1,85 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaStar } from "react-icons/fa";
 import { FiEye } from "react-icons/fi";
+import { useget } from '../../api/authapi';
 
 const AdminDashboard = () => {
-  const [activeTab, setActiveTab] = useState("Review"); // default tab is "Review"
+  const [activeTab, setActiveTab] = useState("Review");
+  const [review, setReview] = useState([])
 
-  const reviewData = [
-    {
-      name: "David Wilson",
-      date: "12/03/2024",
-      review:
-        "Michael’s guidance was invaluable in my transition to a career in data science. His industry insights and practical advice helped me land my dream job.",
-      stars: 5,
-      highlight: true
-    },
-    {
-      name: "John Doc",
-      date: "12/03/2024",
-      review:
-        "Michael’s technical knowledge is impressive. He provided specific guidance on which skills to develop to stay competitive in the software industry.",
-      stars: 5,
-      highlight: false
+  const getReviews = async () => {
+    try {
+      const response = await useget("/Review/Get-all-review")
+      setReview(response.data)
+      console.log(response.data);
     }
-  ];
+    catch (error) {
+      console.log(error);
 
-  const complaintsData = [
-    {
-      cmpId: "SES002",
-      sectionId: "SES002",
-      date: "2023-06-15",
-      complainant: "Johnson Alice",
-      subject: "Video call issues",
-      status: "New"
-    },
-    {
-      cmpId: "SES003",
-      sectionId: "SES002",
-      date: "2023-06-15",
-      complainant: "Johnson Alice",
-      subject: "Can't join",
-      status: "In Progress"
-    },
-    {
-      cmpId: "SES003",
-      sectionId: "SES002",
-      date: "2023-06-15",
-      complainant: "Johnson Alice",
-      subject: "Session Expired",
-      status: "Resolved"
     }
-  ];
 
-  const StatusBadge = ({ status }) => {
-    const base = "px-2 py-1 text-xs font-semibold rounded-full";
-    const style =
-      status === "New"
-        ? "bg-pink-100 text-pink-800"
-        : status === "In Progress"
-        ? "bg-orange-100 text-orange-800"
-        : status === "Resolved"
-        ? "bg-blue-100 text-blue-800"
-        : "";
+  }
+  useEffect(() => {
+    getReviews()
+  }, [])
 
-    return <span className={`${base} ${style}`}>{status}</span>;
-  };
+
+
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-center space-x-4">
         <button
-          className={`px-4 py-1 rounded-full border ${
-            activeTab === "Review" ? "bg-blue-100 border-blue-300" : "bg-white"
-          }`}
+          className={`px-4 py-1 rounded-full border ${activeTab === "Review" ? "bg-blue-100 border-blue-300" : "bg-white"
+            }`}
           onClick={() => setActiveTab("Review")}
         >
           Review
         </button>
-        <button
-          className={`px-4 py-1 rounded-full border ${
-            activeTab === "Complaints" ? "bg-blue-100 border-blue-300" : "bg-white"
-          }`}
+        <button disabled
+          className={`px-4 py-1 rounded-full border ${activeTab === "Complaints" ? "bg-blue-100 border-blue-300" : "bg-white"
+            }`}
           onClick={() => setActiveTab("Complaints")}
         >
           Complaints
@@ -89,29 +48,34 @@ const AdminDashboard = () => {
       {/* Conditionally render content based on activeTab */}
       {activeTab === "Review" ? (
         <div>
-          <h3 className="text-xl font-semibold">Reviews</h3>
-          <p className="text-sm text-gray-600 mb-4">87 reviews</p>
+          <h3 className="text-xl font-semibold"> Latest Reviews</h3>
+          <p className="text-sm text-gray-600 mb-4">({review.length})</p>
           <div className="space-y-4">
-            {reviewData.map((review, index) => (
+            {review.map((review, index) => (
               <div
                 key={index}
-                className={`p-4 border rounded-xl ${review.highlight}`}
+                className={`p-4 border rounded-xl ${review.review}`}
               >
                 <div className="flex items-center space-x-2">
                   <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold">
-                    {review.name[0]}
-                  </div>
+  {(review.username || "?")[0].toUpperCase()}
+</div>
                   <div>
-                    <h4 className="font-bold text-lg leading-4">{review.name}</h4>
-                    <p className="text-xs text-gray-500">{review.date}</p>
+                   <h4 className="font-bold text-lg leading-4">
+  {review.username.charAt(0).toUpperCase() + review.username.slice(1)}
+</h4>
+
+                   <p className="text-xs text-gray-500">
+  {new Date(review.created_at).toLocaleDateString()}
+</p>
                   </div>
                 </div>
                 <p className="mt-2 text-sm">{review.review}</p>
                 <div className="mt-2 text-yellow-400 text-lg flex">
-                  {Array.from({ length: review.stars }).map((_, i) => (
-                    <FaStar key={i} />
-                  ))}
-                </div>
+  {Array.from({ length: review.rating }).map((_, i) => (
+    <FaStar key={i} />
+  ))}
+</div>
               </div>
             ))}
           </div>

@@ -4,7 +4,7 @@ import About from './About';
 import Reviews from './Reviews';
 import BookSessionModal from './BookSessionModal';
 import { useParams } from 'react-router-dom';
-import { useget } from '../../api/authapi';
+import { checkLoginStatus, useget } from '../../api/authapi';
 import { toast } from "react-toastify";
 import { UsersContext } from '../Context/UserContext';
 
@@ -12,8 +12,19 @@ const Details = () => {
   const [activeTab, setActiveTab] = useState('about');
   const [isOpen, setIsOpen] = useState(false);
   const [Counselor, setCounselor] = useState([])
+  const [checkCounselor, setCheckCouncelor] = useState({})
+
+
   const { id } = useParams();
-const {user}=useContext(UsersContext)
+  const { user } = useContext(UsersContext)
+
+
+  const handleBookings = async () => {
+    const res = await checkLoginStatus();
+    setCheckCouncelor(res)
+    console.log(res.data);
+    
+  }
   useEffect(() => {
     const GetCounselor = async () => {
       try {
@@ -30,6 +41,7 @@ const {user}=useContext(UsersContext)
     };
 
     GetCounselor();
+    handleBookings()
   }, [id]);
 
   return (
@@ -85,20 +97,25 @@ const {user}=useContext(UsersContext)
 
 
           <div>
-           <button
-  className="w-full bg-indigo-700 text-white py-3 rounded-md text-lg font-semibold hover:bg-indigo-800 transition"
-  onClick={() => {
-    if (user) {
-      setIsOpen(true);
-    } else {
-      toast.warning("Please login to book a session", {
-        position: "top-right",
-      });
-    }
-  }}
->
-  Book a Session
-</button>
+            <button
+              className={`w-full py-3 rounded-md text-lg font-semibold transition ${checkCounselor === Counselor.user_id
+                ? "bg-gray-400 text-white cursor-not-allowed"
+                : "bg-indigo-700 text-white hover:bg-indigo-800"
+                }`}
+              disabled={checkCounselor === Counselor.user_id}
+              onClick={() => {
+                if (user) {
+                  setIsOpen(true);
+                } else {
+                  toast.warning("Please login to book a session", {
+                    position: "top-right",
+                  });
+                }
+              }}
+            >
+              Book a Session
+            </button>
+
 
             {isOpen && <BookSessionModal data={Counselor} onClose={() => setIsOpen(false)} />}
 
@@ -130,7 +147,7 @@ const {user}=useContext(UsersContext)
 
       {/* Tab Content Placeholder */}
       <div className="mt-6">
-        {activeTab === 'about' ? <About data={Counselor}/> : <Reviews data={Counselor} />}
+        {activeTab === 'about' ? <About data={Counselor} /> : <Reviews data={Counselor} />}
 
       </div>
     </div>
