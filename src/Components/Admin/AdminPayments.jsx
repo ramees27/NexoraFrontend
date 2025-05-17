@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useget } from '../../api/authapi';
+import { useget, usePatch } from '../../api/authapi';
 import { UsersContext } from '../Context/UserContext';
 
 const AdminPayments = () => {
@@ -24,7 +24,7 @@ const AdminPayments = () => {
     try {
       const response = await useget("/AdminPayment/payment-summary")
       setPaymentsSummery(response.data)
-      console.log(response);
+   
     }
     catch (error) {
       console.log(error);
@@ -38,6 +38,23 @@ const AdminPayments = () => {
    
 
   }
+ const payPaymenttoCouncelor=async(id)=>{
+  try{
+
+  
+  const responce= await usePatch(`/AdminPayment/Review-payment-update?booking_id=${id}`)
+  console.log(responce.data);
+   getPayments()
+    paymet();
+    getPaymentsSummery()
+  }
+  catch(error){
+    console.log(error);
+    
+  }
+ }
+
+
   useEffect(() => {
     getPayments()
     paymet();
@@ -78,7 +95,7 @@ const AdminPayments = () => {
             <th className="p-2 border">Session Status</th>
             <th className="p-2 border">Counselor UPI ID</th>
             <th className="p-2 border">Total Receipt</th>
-            <th className="p-2 border">Pay Amount (-10%)</th>
+            <th className="p-2 border">Pay Amount </th>
             <th className="p-2 border">Paid Date</th>
             <th className="p-2 border">Status</th>
             <th className="p-2 border">Actions</th>
@@ -114,7 +131,7 @@ const AdminPayments = () => {
                       item.admin_payout_status === "pending"
                     )
                   }
-                >
+              onClick={()=>payPaymenttoCouncelor(item.booking_id)}  >
                   Pay
                 </button>
               </td>

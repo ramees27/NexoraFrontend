@@ -11,7 +11,7 @@ const AdminReceipt = () => {
   const GetPay = async () => {
     const getDetails = await getPaymentdetails();
     setReceipt(getDetails)
-    console.log(getDetails)
+  
   }
 
 
@@ -21,9 +21,9 @@ const AdminReceipt = () => {
       setStudentData(getDetails.data)
       console.log(getDetails)
     }
-    catch(error){
+    catch (error) {
       console.log(error);
-      
+
     }
   }
 
@@ -74,19 +74,19 @@ const AdminReceipt = () => {
               <td className="p-2 border">{new Date(item.preferd_date).toLocaleDateString("en-Gb")}</td>
               <td className="p-2 border">₹{item.total_amount}</td>
               <td className="p-2 border">₹{item.commission_amount}</td>
-            <td className={`p-2 border ${item.status === "completed" ? "text-green-600" : "text-orange-500"}`}>
-  {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
-</td>
+              <td className={`p-2 border ${item.status === "completed" ? "text-green-600" : "text-orange-500"}`}>
+                {item.status.charAt(0).toUpperCase() + item.status.slice(1).toLowerCase()}
+              </td>
 
-            <td className="p-2 border">
-  <button className="mr-2 px-3 py-1 rounded border">View</button>
-  <button
-    className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50"
-    disabled={!(item.status === "cancelled" && item.payment_status === true)}
-  >
-    Refund
-  </button>
-</td>
+              <td className="p-2 border">
+                <button className="mr-2 px-3 py-1 rounded border">View</button>
+                <button
+                  className="px-3 py-1 bg-red-500 text-white rounded disabled:opacity-50"
+                  disabled={!(item.status === "cancelled" && item.payment_status === true)}
+                >
+                  Refund
+                </button>
+              </td>
 
             </tr>
           ))}

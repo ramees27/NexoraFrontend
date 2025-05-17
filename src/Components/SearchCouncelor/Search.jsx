@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { FaArrowLeft, FaSearch, FaStar } from "react-icons/fa";
+import React, { useEffect, useState } from 'react';
+import { FaArrowLeft, FaSearch, FaStar } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { useget } from '../../api/authapi';
 
@@ -7,47 +7,53 @@ const Search = () => {
   const navigate = useNavigate();
   const [counselors, setCounselors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filteredSpecializations, setFilteredSpecializations] = useState([]);
   const [allSpecializations, setAllSpecializations] = useState([]);
 
+  // Get all counselors and extract unique specializations
   useEffect(() => {
     const GetAllCounselors = async () => {
-      const response = await useget("/Councelor/all-Councelor");
-
+      const response = await useget('/Councelor/all-Councelor');
       if (response?.data) {
         setCounselors(response.data);
 
-        // Extract unique specialization tags
         const allSpecs = response.data.flatMap(c =>
           c.specialization?.split(',').map(s => s.trim())
         );
         setAllSpecializations([...new Set(allSpecs)]);
-      } else {
-        console.log("Error fetching counselors");
       }
     };
 
     GetAllCounselors();
   }, []);
 
+  // Debounced keyword-based search
+  useEffect(() => {
+    const delayDebounce = setTimeout(async () => {
+      const trimmedKeyword = searchTerm.trim();
+      if (trimmedKeyword === '') {
+        const response = await useget('/Councelor/all-Councelor');
+        if (response?.data) setCounselors(response.data);
+      } else {
+        const response = await useget(`/Councelor/all-CouncelorByKeyword?keyword=${trimmedKeyword}`);
+        if (response?.data) setCounselors(response.data);
+      }
+    }, 400);
+
+    return () => clearTimeout(delayDebounce);
+  }, [searchTerm]);
+
   const handleSearchChange = (e) => {
-    const keyword = e.target.value;
+    const keyword = e.target.value.trimStart();
     setSearchTerm(keyword);
-    if (keyword === '') {
-      setFilteredSpecializations([]);
-    } else {
-      const filtered = allSpecializations.filter(spec =>
-        spec.toLowerCase().includes(keyword.toLowerCase())
-      );
-      setFilteredSpecializations(filtered);
-    }
   };
 
-  const handleSpecializationClick = async (specialization) => {
-    setSearchTerm(specialization);
-    setFilteredSpecializations([]);
-
-    const response = await useget(`/Councelor/all-CouncelorByKeyword?keyword=${specialization}`);
+  const handleManualSearch = async () => {
+    const trimmedKeyword = searchTerm.trim();
+    const response = await useget(
+      trimmedKeyword === ''
+        ? '/Councelor/all-Councelor'
+        : `/Councelor/all-CouncelorByKeyword?keyword=${trimmedKeyword}`
+    );
     if (response?.data) {
       setCounselors(response.data);
     }
@@ -58,7 +64,7 @@ const Search = () => {
       {/* Back Button */}
       <div className="mb-4">
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate('/')}
           className="flex items-center gap-2 bg-black text-white px-3 py-1.5 rounded-md text-sm font-medium"
         >
           <FaArrowLeft /> Back to Home
@@ -84,27 +90,12 @@ const Search = () => {
             className="flex-grow px-2 py-2 text-sm outline-none text-gray-700"
           />
           <button
-            onClick={() => handleSpecializationClick(searchTerm)}
+            onClick={handleManualSearch}
             className="bg-[#3654ff] hover:bg-blue-700 text-white px-5 py-2 text-sm font-semibold"
           >
             Search
           </button>
         </div>
-
-        {/* Filtered Specializations */}
-        {filteredSpecializations.length > 0 && (
-          <div className="absolute top-14 w-full max-w-2xl bg-white shadow-md rounded-md z-10 p-2 border">
-            {filteredSpecializations.map((spec, index) => (
-              <div
-                key={index}
-                onClick={() => handleSpecializationClick(spec)}
-                className="cursor-pointer py-1 px-2 hover:bg-blue-100 text-sm text-gray-800"
-              >
-                {spec}
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Counselor Grid */}
@@ -116,7 +107,7 @@ const Search = () => {
             onClick={() => navigate(`/details/${x.counselors_id}`)}
           >
             <img
-              src={x.image_url || "https://via.placeholder.com/200x200.png?text=No+Image"}
+              src={x.image_url || 'https://via.placeholder.com/200x200.png?text=No+Image'}
               alt={x.full_name}
               className="w-full h-48 object-contain"
             />
