@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { cancelBookings, useget } from '../../../api/authapi';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom'; // 👈 Add this
 
 const Upcoming = () => {
   const [upcoming, setUpcoming] = useState([]);
+  const navigate = useNavigate(); // 👈
 
   const getUpcoming = async () => {
     try {
       const response = await useget("/BookingByCouncelor/councelor-get-Confirmed-bookings");
       setUpcoming(response.data);
       console.log(response.data);
+      
     } catch (error) {
       console.log(error);
     }
@@ -19,23 +22,20 @@ const Upcoming = () => {
     getUpcoming();
   }, []);
 
-const editStatus = async (bookingId, status) => {
-      try {
-        const data={
-          bookingId :bookingId,
-          status :status
-        }
-        const res = await cancelBookings(data);
-        toast.success("Booking Removed Successfully");
-        // Optionally refresh data after cancel
-     getUpcoming()
-  
-  
-      } catch (error) {
-        console.log(error);
-        toast.error("Failed to Remove booking");
-      }
-    };
+  const editStatus = async (bookingId, status) => {
+    try {
+      const data = {
+        bookingId,
+        status
+      };
+      await cancelBookings(data);
+      toast.success("Booking Removed Successfully");
+      getUpcoming();
+    } catch (error) {
+      console.log(error);
+      toast.error("Failed to Remove booking");
+    }
+  };
 
   return (
     <div className="overflow-x-auto p-4">
@@ -51,9 +51,8 @@ const editStatus = async (bookingId, status) => {
             <th className="px-4 py-2">Action</th>
           </tr>
         </thead>
-
         <tbody>
-          {upcoming === null ? (
+          {upcoming === null || upcoming.length === 0 ? (
             <tr>
               <td colSpan="7" className="px-4 py-6 text-center text-gray-500">
                 No upcoming bookings found.
@@ -71,29 +70,27 @@ const editStatus = async (bookingId, status) => {
                   <span className={`font-semibold ${entry.is_active ? 'text-green-600' : 'text-red-600'}`}>
                     {entry.is_active ? 'Active' : 'Cancelled'}
                   </span>
-
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex gap-2">
-                    {/* Join session button */}
                     <button
-                      className={`px-3 py-1 rounded text-white ${entry.is_active
-                        ? 'bg-blue-600 hover:bg-blue-700'
-                        : 'bg-gray-400 cursor-not-allowed'
-                        }`}
-                      disabled={!entry.is_active}
-                    >
-                      Join session
-                    </button>
+  className={`px-3 py-1 rounded text-white ${entry.is_active
+    ? 'bg-blue-600 hover:bg-blue-700'
+    : 'bg-gray-400 cursor-not-allowed'
+    }`}
+  disabled={!entry.is_active}
+  onClick={() => navigate(`/video-call/${entry.booking_id}/${entry.student_id}`)}
+>
+  Join session
+</button>
 
-                    {/* Remove button */}
                     <button
                       className={`px-3 py-1 rounded border ${!entry.is_active
                         ? 'border-gray-600 text-gray-600 hover:bg-gray-100'
                         : 'border-gray-300 text-gray-400 cursor-not-allowed'
                         }`}
                       disabled={entry.is_active}
-                      onClick={()=>editStatus(entry.booking_id,"cancelled")}
+                      onClick={() => editStatus(entry.booking_id, "cancelled")}
                     >
                       Remove
                     </button>
@@ -105,9 +102,7 @@ const editStatus = async (bookingId, status) => {
         </tbody>
       </table>
     </div>
-
-
   )
 }
 
-export default Upcoming
+export default Upcoming;

@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { FaEye } from 'react-icons/fa';
 import { useget } from '../../api/authapi';
+import CounselorProfileModal from './CounselorProfileModal';
 
 const AdminUsers = () => {
     const [selectedTab, setSelectedTab] = useState("counselors");
     const [conselorData, setCouncelorData] = useState([]);
     const [studentData, setStudentData] = useState([])
+    const [showModal, setShowModal] = useState(false);
+    const [selectedCounselor, setSelectedCounselor] = useState(null);
 
     const getAllCouncelors = async () => {
         try {
             const response = await useget("/AdminUser/admin/Councelors")
             setCouncelorData(response.data)
+            console.log(response.data)
         }
         catch (error) {
             console.log(error);
@@ -21,6 +25,7 @@ const AdminUsers = () => {
         try {
             const response = await useget("/AdminUser/admin/students")
             setStudentData(response.data)
+             console.log(response.data)
         }
         catch (error) {
             console.log(error);
@@ -105,10 +110,18 @@ const AdminUsers = () => {
                                     </td>
                                 )}
                                 <td className="p-3 flex gap-2">
-                                    <button className="flex items-center gap-1 bg-white border border-gray-300 px-3 py-1 rounded">
+                                    <button
+                                        className="flex items-center gap-1 bg-white border border-gray-300 px-3 py-1 rounded hover:bg-gray-100"
+                                        onClick={() => {
+                                            setSelectedCounselor(user);
+                                            setShowModal(true);
+                                        }}
+                                    >
                                         <FaEye className="text-gray-600" />
                                         View
                                     </button>
+
+
 
                                     {user.is_deleted ? (
                                         <button className="bg-green-700 text-white px-3 py-1 rounded">
@@ -123,6 +136,9 @@ const AdminUsers = () => {
                                         <button className="bg-red-700 text-white px-3 py-1 rounded">
                                             {selectedTab === "students" ? "Remove" : "Block"}
                                         </button>
+                                    )}
+                                    {showModal && selectedCounselor && (
+                                        <CounselorProfileModal data={selectedCounselor} onClose={() => setShowModal(false)} />
                                     )}
                                 </td>
 
